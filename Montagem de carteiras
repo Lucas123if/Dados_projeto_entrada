@@ -1,0 +1,45 @@
+tickers = ['SPY', 'EWZ', 'EWJ', 'FXI', 'INDA', 'ERUS'] #S&P 500, Brasil, Japão, China, Índia, Rússia,
+Brics = ['EWZ', 'FXI', 'ERUS', 'INDA']
+Desenvolvidos = ['EWJ', 'SPY']
+Variaveis = ['Close', 'Open', 'High', 'Low', 'Volume']
+
+
+Carteira1 = [0.20, 0.20, 0.20, 0.20, 0.10, 0.10]
+Carteira2 = [0.05, 0.25, 0.03, 0.30, 0.20, 0.17]
+Carteira3 = [0.49, 0.05, 0.30, 0.08, 0.03, 0.05]
+Carteira4 = [0.08, 0.31, 0.07, 0.45, 0.05, 0.04]
+
+carteiras = {
+    "Carteira1": Carteira1,
+    "Carteira2": Carteira2,
+    "Carteira3": Carteira3,
+    "Carteira4": Carteira4
+}
+
+# Agora é pra calcular o retorno de cada carteira
+resultados = {}
+for nome, pesos in carteiras.items():
+    retorno_carteira = (retornos * pesos).sum(axis=1)
+    crescimento = (1 + retorno_carteira).cumprod()
+    resultados[nome] = crescimento
+
+# Juntar todas as carteiras em um DataFrame
+df_crescimento = pd.DataFrame(resultados)
+
+df_crescimento.plot(figsize=(10,6), title="Evolução das Carteiras")
+
+
+estatisticas = {}
+for nome, pesos in carteiras.items():
+    retorno_carteira = (retornos * pesos).sum(axis=1)
+    retorno_anual = retorno_carteira.mean() * 252
+    volatilidade_anual = retorno_carteira.std() * (252 ** 0.5)
+    sharpe = retorno_anual / volatilidade_anual
+    estatisticas[nome] = {
+        "Retorno Anual (%)": retorno_anual * 100,
+        "Volatilidade Anual (%)": volatilidade_anual * 100,
+        "Sharpe": sharpe
+    }
+
+estatisticas_df = pd.DataFrame(estatisticas).T
+print(estatisticas_df)
